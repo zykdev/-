@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点我啊！点不到吧！</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            background-color: #f0f0f0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        button {
+            position: absolute;
+            padding: 1rem 2rem;
+            font-size: 16px;
+            background-color: #ff4567;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: #ff1a47;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .victory-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: green;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+
+        .surrender-button {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            padding: 1rem 2rem;
+            background-color: #428bca;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // 弹出警告框
+        alert("不准用手机、平板、触摸屏，不准用连点器！");
+    </script>
+
+    <button id="dodgeButton">点我</button>
+    <div id="victoryMessage" class="victory-message">胜利！！你咋点到的？？</div>
+    <button id="surrenderButton" class="surrender-button">投降</button>
+
+    <script>
+        const button = document.getElementById('dodgeButton');
+        const victoryMessage = document.getElementById('victoryMessage');
+        const surrenderButton = document.getElementById('surrenderButton');
+        let buttonWidth;
+        let buttonHeight;
+        let windowWidth;
+        let windowHeight;
+
+        // 获取按钮和窗口的尺寸
+        const updateDimensions = () => {
+            buttonWidth = button.offsetWidth;
+            buttonHeight = button.offsetHeight;
+            windowWidth = window.innerWidth;
+            windowHeight = window.innerHeight;
+        };
+
+        // 随机生成位置
+        const getRandomPosition = (min, max) => {
+            return Math.floor(Math.random() * (max - min)) + min;
+        };
+
+        // 移动按钮到随机位置
+        const moveButton = () => {
+            const x = getRandomPosition(buttonWidth, windowWidth - buttonWidth);
+            const y = getRandomPosition(buttonHeight, windowHeight - buttonHeight);
+            button.style.left = `${x}px`;
+            button.style.top = `${y}px`;
+        };
+
+        // 绑定点击事件
+        button.addEventListener('click', () => {
+            victoryMessage.style.display = 'block';
+            button.style.display = 'none'; // 隐藏按钮
+        });
+
+        // 绑定投降按钮点击事件
+        surrenderButton.addEventListener('click', () => {
+            button.style.pointerEvents = 'auto'; // 恢复按钮的点击交互
+            document.removeEventListener('mousemove', handleMouseMove); // 移除 micemove 监听
+            button.style.left = '50%';
+            button.style.top = '50%';
+            button.style.transform = 'translate(-50%, -50%)';
+        });
+
+        // 监听鼠标移动事件
+        const handleMouseMove = (event) => {
+            updateDimensions();
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+
+            // 获取按钮当前位置
+            const buttonLeft = button.offsetLeft;
+            const buttonTop = button.offsetTop;
+
+            // 设置判定范围的大小
+            const padding = 300;
+
+            // 检查鼠标是否靠近按钮
+            if (
+                mouseX > buttonLeft - padding &&
+                mouseX < buttonLeft + buttonWidth + padding &&
+                mouseY > buttonTop - padding &&
+                mouseY < buttonTop + buttonHeight + padding
+            ) {
+                moveButton();
+            }
+        };
+
+        // 初始化
+        updateDimensions();
+        moveButton();
+        document.addEventListener('mousemove', handleMouseMove);
+    </script>
+</body>
+</html>
